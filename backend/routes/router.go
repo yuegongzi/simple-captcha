@@ -79,7 +79,7 @@ func registerCaptchaRoutes(rg *gin.RouterGroup) {
 		controllers.VerifyCaptchaHandler)
 
 	// 二次验证（业务服务端侧） - 需要 API Key 鉴权并且携带特定验证请求参数
-	rg.POST("/:key/validate",
+	rg.POST("/validate/:key",
 		middleware.APIKeyMiddleware(),
 		middleware.ValidateStateRequest(),
 		controllers.ValidateCaptchaHandler)
