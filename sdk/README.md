@@ -1,4 +1,4 @@
-## g-captcha
+## @aetherlib/g-captcha
 
 采用go语言编写的go-captcha, 针对go-captcha-react做进一步封装处理, 自动处理后台逻辑
 
@@ -38,7 +38,7 @@ useCaptcha
 
 ```jsx
 import { useRef } from 'react';
-import { useCaptcha } from 'g-captcha';
+import { useCaptcha } from '@aetherlib/g-captcha';
 
 export default () => {
   const [run] = useCaptcha({ path: 'http://foo.com', type: 'auto' });
@@ -57,7 +57,7 @@ export default () => {
 
 ```jsx
 import { useRef } from 'react';
-import { Captcha } from 'g-captcha';
+import { Captcha } from '@aetherlib/g-captcha';
 
 export default () => {
   const ref = useRef();

@@ -1,7 +1,7 @@
 import { defineConfig } from 'dumi';
 
 export default defineConfig({
-  title: 'g-captcha',
+  title: '@aetherlib/g-captcha',
   outputPath: 'docs-dist',
   // proxy: {
   //   '/cgi': {

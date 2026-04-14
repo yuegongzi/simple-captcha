@@ -1,6 +1,6 @@
 {
   "private": false,
-  "name": "g-captcha",
+  "name": "@aetherlib/g-captcha",
   "description": "go-captcha集成版",
   "keywords": [
     "captcha",
@@ -9,7 +9,7 @@
   ],
   "version": "2.0.0",
   "authors": {
-    "name": "yanganfu",
+    "name": "yuegongzi",
     "email": "yanganfu2012@gmail.com"
   },
   "repository": "https://github.com/yuegongzi/simple-captcha.git",

@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Captcha, useCaptcha } from 'g-captcha';
+import { Captcha, useCaptcha } from '@aetherlib/g-captcha';
 
 export default () => {
   const ref = useRef();

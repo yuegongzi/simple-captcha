@@ -1,4 +1,4 @@
-## g-captcha
+## @aetherlib/g-captcha
 
 采用go语言编写的go-captcha, 针对go-captcha-react做进一步封装处理, 自动处理后台逻辑
 
