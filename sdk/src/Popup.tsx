@@ -1,11 +1,14 @@
 import type { BaseTypeProps } from './types';
 import type { ReactNode } from 'react';
+import { useCaptchaConfig } from './CaptchaProvider';
 export interface PopupProps extends BaseTypeProps {
   visible?: boolean;
   children?: ReactNode;
 }
 
 const Popup = ({ className, style, visible = false, children }: PopupProps) => {
+  const { zIndex } = useCaptchaConfig();
+
   if (!visible) return null;
 
   return (
@@ -17,7 +20,7 @@ const Popup = ({ className, style, visible = false, children }: PopupProps) => {
         top: 0,
         width: '100vw',
         height: '100vh',
-        zIndex: 9999,
+        zIndex,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

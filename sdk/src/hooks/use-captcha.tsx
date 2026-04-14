@@ -1,78 +1,108 @@
-import { useCallback, useEffect, useRef } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import Captcha from '../Captcha';
-import type { CaptchaType } from '../Captcha.types';
+import type {
+  CaptchaErrorResponse,
+  CaptchaRef,
+  CaptchaVerifyOptions,
+  CaptchaVerifySuccessData,
+} from '../Captcha.types';
 
-export type CaptchaOption = {
-  /**
-   * 类型
-   */
-  type: CaptchaType;
-  /**
-   * 路径
-   */
-  path: string
+type PendingRequest = {
+  resolve: (value: CaptchaVerifySuccessData) => void;
+  reject: (reason?: CaptchaErrorResponse | string) => void;
+};
+
+export interface UseCaptchaReturn {
+  verify: (options?: CaptchaVerifyOptions) => Promise<CaptchaVerifySuccessData>;
+  holder: ReactNode;
 }
-export type Func = (val: any) => void;
 
-export function useCaptcha(option: CaptchaOption) {
-  const ref = useRef<any>(null);
-  const successRef = useRef<Func>(null);
-  const failRef = useRef<Func>(null);
-  const rootRef = useRef<Root | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+export function useCaptcha(): UseCaptchaReturn {
+  const captchaRef = useRef<CaptchaRef | null>(null);
+  const pendingRef = useRef<PendingRequest | null>(null);
+  const [activeOptions, setActiveOptions] = useState<CaptchaVerifyOptions | null>(null);
+  const [requestId, setRequestId] = useState(0);
 
-  const onSuccess = useCallback((data: any) => {
-    successRef.current?.(data);
+  const resetPending = useCallback(() => {
+    pendingRef.current = null;
+    setActiveOptions(null);
   }, []);
 
-  const onFail = useCallback((msg: any) => {
-    failRef.current?.(msg);
+  const handleSuccess = useCallback((data: CaptchaVerifySuccessData) => {
+    activeOptions?.onSuccess?.(data);
+    pendingRef.current?.resolve(data);
+    resetPending();
+  }, [activeOptions, resetPending]);
+
+  const handleFail = useCallback((error: CaptchaErrorResponse | string) => {
+    activeOptions?.onFail?.(error);
+    pendingRef.current?.reject(error);
+    resetPending();
+  }, [activeOptions, resetPending]);
+
+  const handleCancel = useCallback(() => {
+    activeOptions?.onCancel?.();
+  }, [activeOptions]);
+
+  const handleStartupError = useCallback((reason: CaptchaErrorResponse | string) => {
+    pendingRef.current?.reject(reason);
+    resetPending();
+  }, [resetPending]);
+
+  const verify = useCallback((options?: CaptchaVerifyOptions) => {
+    if (pendingRef.current) {
+      pendingRef.current.reject('验证码流程已被新的请求替换');
+    }
+
+    return new Promise<CaptchaVerifySuccessData>((resolve, reject) => {
+      pendingRef.current = { resolve, reject };
+      setActiveOptions(options || {});
+      setRequestId((value) => value + 1);
+    });
   }, []);
 
   useEffect(() => {
-    if (typeof document === 'undefined') {
+    if (requestId === 0 || !activeOptions) {
       return;
     }
 
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-    containerRef.current = container;
-    rootRef.current = createRoot(container);
+    const verifyPromise = captchaRef.current?.verify();
+    if (!verifyPromise) {
+      return;
+    }
 
+    void verifyPromise.catch((error) => handleStartupError(error as CaptchaErrorResponse | string));
+  }, [activeOptions, handleStartupError, requestId]);
+
+  useEffect(() => {
     return () => {
-      rootRef.current?.unmount();
-      containerRef.current?.remove();
-      rootRef.current = null;
-      containerRef.current = null;
+      if (pendingRef.current) {
+        pendingRef.current.reject('验证码实例已卸载');
+      }
     };
   }, []);
 
-  useEffect(() => {
-    if (!rootRef.current) {
-      return;
+  const holder = useMemo(() => {
+    if (!activeOptions) {
+      return null;
     }
 
-    rootRef.current.render(
-      <Captcha
-        path={option.path}
-        type={option.type}
-        onFail={onFail}
-        onSuccess={onSuccess}
-        ref={ref}
-      />,
-    );
-  }, [ option.path, option.type, onFail, onSuccess ]);
+    const { onCancel: _onCancel, onFail: _onFail, onSuccess: _onSuccess, ...captchaProps } = activeOptions;
 
-  const verify = (callBack: Func, fail: Func) => {
-    successRef.current = callBack;
-    failRef.current = fail;
-    ref.current?.verify?.();
+    return (
+      <Captcha
+        {...captchaProps}
+        onCancel={handleCancel}
+        onFail={handleFail}
+        onSuccess={handleSuccess}
+        ref={captchaRef}
+      />
+    );
+  }, [activeOptions, handleCancel, handleFail, handleSuccess]);
+
+  return {
+    verify,
+    holder,
   };
-  const run = () => {
-    return new Promise((resolve, reject) => {
-      verify(resolve, reject);
-    });
-  };
-  return [ run, ref.current ];
 }

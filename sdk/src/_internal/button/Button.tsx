@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import type { ButtonConfig, ButtonType } from './button.types';
 import { defaultButtonConfig } from './button.types';
 import { BtnDefaultIcon, BtnErrorIcon, BtnWarnIcon, BtnSuccessIcon } from '../icons';
-import { useConfig } from '../../ConfigProvider';
+import { useCaptchaConfig } from '../../CaptchaProvider';
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
   config?: ButtonConfig;
@@ -13,7 +13,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Button = (props: ButtonProps) => {
-  const { locale } = useConfig();
+  const { locale } = useCaptchaConfig();
   const [localConfig, setLocalConfig] = useState<ButtonConfig>({ ...defaultButtonConfig(), ...(props.config || {}) });
 
   useEffect(() => {

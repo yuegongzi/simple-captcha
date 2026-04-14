@@ -154,62 +154,60 @@ yarn add @aetherlib/g-captcha
 pnpm add @aetherlib/g-captcha
 ```
 
-> **要求**: React >= 18.0.0, React DOM >= 18.0.0
+> **要求**: React >= 19.0.0, React DOM >= 19.0.0
 
-### 方式一：组件模式（推荐）
+### 推荐接法
 
-将 `<Captcha>` 作为容器包裹触发按钮，用户点击后弹出验证弹窗：
+当前版本采用新的配置模型：
+
+- `CaptchaProvider` 负责全局 `api / locale / theme / zIndex`
+- `Captcha` 负责单个实例渲染
+- `useCaptcha()` 负责按次触发验证，并返回 `holder`
 
 ```tsx
 import { useRef } from 'react';
-import { Captcha } from '@aetherlib/g-captcha';
+import { Captcha, CaptchaProvider, useCaptcha } from '@aetherlib/g-captcha';
 
 function App() {
   const ref = useRef();
+  const { verify, holder } = useCaptcha();
 
   return (
-    <Captcha
-      path="https://captcha.yourdomain.com"
-      type="auto"
-      ref={ref}
-      onSuccess={(data) => {
-        // data.second_key 用于业务后端二次验证
-        console.log('验证成功', data);
-        submitForm(data.second_key);
-      }}
-      onFail={(msg) => console.log('验证失败', msg)}
+    <CaptchaProvider
+      api={{ basePath: 'https://captcha.yourdomain.com' }}
+      locale={{ buttonText: '点击验证' }}
+      theme={{ primaryColor: '#111827', borderRadius: 12 }}
     >
-      <button onClick={() => ref.current?.verify()}>
-        点击验证
+      {holder}
+
+      <Captcha
+        type="auto"
+        ref={ref}
+        onSuccess={(data) => {
+          console.log('验证成功', data);
+          submitForm(data.second_key);
+        }}
+        onFail={(msg) => console.log('验证失败', msg)}
+      >
+        <button onClick={() => ref.current?.verify()}>
+          组件模式
+        </button>
+      </Captcha>
+
+      <button
+        onClick={async () => {
+          try {
+            const data = await verify({ type: 'auto' });
+            console.log('验证成功', data);
+          } catch (e) {
+            console.log('验证失败或取消', e);
+          }
+        }}
+      >
+        Hook 模式
       </button>
-    </Captcha>
+    </CaptchaProvider>
   );
-}
-```
-
-### 方式二：Hook 模式
-
-适用于需要程序化触发验证的场景：
-
-```tsx
-import { useCaptcha } from '@aetherlib/g-captcha';
-
-function App() {
-  const [run] = useCaptcha({
-    path: 'https://captcha.yourdomain.com',
-    type: 'auto',
-  });
-
-  const handleClick = async () => {
-    try {
-      const data = await run();
-      console.log('验证成功', data);
-    } catch (e) {
-      console.log('验证失败或取消', e);
-    }
-  };
-
-  return <button onClick={handleClick}>验证</button>;
 }
 ```
 
@@ -217,18 +215,27 @@ function App() {
 
 ## API 参考
 
+### `<CaptchaProvider>` Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `api` | `ApiConfig` | — | 全局接口配置，使用 `api.basePath` 指定后端服务地址 |
+| `locale` | `LocaleTexts` | — | 全局文案覆盖 |
+| `theme` | `ThemeTokens` | — | 全局主题配置 |
+| `zIndex` | `number` | `9999` | 弹窗层级 |
+
 ### `<Captcha>` Props
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `path` | `string` | — | 验证码后端服务地址 |
 | `type` | `CaptchaType` | `'auto'` | 验证码类型，`auto` 随机选择 |
 | `onSuccess` | `(data) => void` | — | 验证成功回调，`data` 包含 `second_key` |
 | `onFail` | `(msg) => void` | — | 验证失败回调 |
 | `onCancel` | `() => void` | — | 用户取消回调 |
-| `locale` | `LocaleTexts` | — | 文案覆盖 |
-| `theme` | `ThemeTokens` | — | 主题配置 |
-| `config` | `CaptchaConfig` | — | 验证码尺寸配置 |
+| `api` | `ApiConfig` | — | 当前实例的接口配置覆盖 |
+| `locale` | `LocaleTexts` | — | 当前实例的文案覆盖 |
+| `theme` | `ThemeTokens` | — | 当前实例的主题覆盖 |
+| `config` | `CaptchaConfig` | — | 当前实例的验证码配置 |
 | `ref` | `Ref` | — | 通过 `ref.current.verify()` 触发验证 |
 
 ### `LocaleTexts` 文案配置
@@ -236,8 +243,7 @@ function App() {
 通过 `locale` 属性覆盖默认中文文案，实现国际化：
 
 ```tsx
-<Captcha
-  path="..."
+<CaptchaProvider
   locale={{
     userCancel: 'User Cancelled',
     loading: 'Loading...',
@@ -246,7 +252,9 @@ function App() {
     confirmButton: 'Confirm',
     buttonText: 'Click to verify',
   }}
-/>
+>
+  <App />
+</CaptchaProvider>
 ```
 
 | Key | 默认值 | 说明 |
@@ -261,8 +269,7 @@ function App() {
 ### `ThemeTokens` 主题配置
 
 ```tsx
-<Captcha
-  path="..."
+<CaptchaProvider
   theme={{
     primaryColor: '#347eff',
     backgroundColor: '#ffffff',
@@ -270,8 +277,17 @@ function App() {
     borderColor: '#e2e2e2',
     borderRadius: 4,
   }}
-/>
+>
+  <App />
+</CaptchaProvider>
 ```
+
+### `useCaptcha()` 返回值
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `verify` | `(options?: CaptchaVerifyOptions) => Promise<any>` | 按次触发验证，并允许覆盖 `type / api / locale / theme / config` |
+| `holder` | `ReactNode` | 必须渲染在当前 React 树中的承载节点 |
 
 ---
 

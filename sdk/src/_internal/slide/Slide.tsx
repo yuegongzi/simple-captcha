@@ -4,7 +4,7 @@ import type { SlideConfig, SlideData, SlideEvent } from './slide.types';
 import { defaultSlideConfig, defaultSlideData } from './slide.types';
 import { CloseIcon, RefreshIcon, LoadingIcon, ArrowsIcon } from '../icons';
 import { useSlideHandler } from './use-slide-handler';
-import { useConfig } from '../../ConfigProvider';
+import { useCaptchaConfig } from '../../CaptchaProvider';
 
 export interface SlideRef {
   reset: () => void;
@@ -20,7 +20,7 @@ export interface SlideProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Slide = forwardRef<SlideRef, SlideProps>((props, ref) => {
-  const { locale } = useConfig();
+  const { locale } = useCaptchaConfig();
   const [localConfig, setLocalConfig] = useState<SlideConfig>({ ...defaultSlideConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<SlideData>({ ...defaultSlideData(), ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<SlideEvent>({ ...(props.events || {}) });

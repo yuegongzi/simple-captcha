@@ -1,5 +1,4 @@
-import type { BaseTypeProps } from './types';
-import type { ReactNode } from 'react';
+import type { ReactNode, CSSProperties } from 'react';
 
 export type CaptchaType = 'auto' | 'click-text' | 'click-shape' | 'slide-text' | 'slide-region' | 'rotate';
 
@@ -24,6 +23,29 @@ export interface ApiConfig {
   basePath?: string;
 }
 
+export interface CaptchaErrorResponse {
+  code: number;
+  error: string;
+}
+
+export interface CaptchaChallengeData {
+  key: string;
+  image: string;
+  thumb?: string;
+  thumbWidth?: number;
+  thumbHeight?: number;
+  thumbX?: number;
+  thumbY?: number;
+}
+
+export interface CaptchaVerifySuccessData {
+  second_key: string;
+}
+
+export interface CaptchaStateData {
+  valid: boolean;
+}
+
 export interface CaptchaConfig {
   width?: number;
   height?: number;
@@ -39,55 +61,33 @@ export interface CaptchaConfig {
   dotSize?: number;
 }
 
-export interface CaptchaProps extends BaseTypeProps {
-  /**
-   * 后端服务根路径，例如 'http://127.0.0.1:3321'
-   */
-  path?: string;
-
-  /**
-   * API 配置，仅包含 basePath
-   */
-  api?: ApiConfig;
-
-  /**
-   * 主题与样式配置
-   */
-  theme?: ThemeTokens;
-
-  /**
-   * 文案配置，覆盖默认中文文案
-   */
+export interface CaptchaGlobalConfig {
   locale?: LocaleTexts;
+  theme?: ThemeTokens;
+  api?: ApiConfig;
+  zIndex?: number;
+}
 
-  /**
-   * 验证码类型
-   * @default auto
-   */
+export interface CaptchaInstanceOptions {
   type?: CaptchaType;
-
-  /**
-   * 取消事件
-   */
-  onCancel?: () => void;
-  /**
-   * 校验失败
-   */
-  onFail?: (msg: string) => void;
-  /**
-   * 校验成功
-   */
-  onSuccess?: (data: any) => void;
-  /**
-   * 引用声明
-   */
-  ref?: any;
-  /**
-   * 子节点
-   */
-  children?: ReactNode,
-  /**
-   * 验证码基本配置
-   */
   config?: CaptchaConfig;
+  className?: string;
+  style?: CSSProperties;
+  locale?: LocaleTexts;
+  theme?: ThemeTokens;
+  api?: ApiConfig;
+}
+
+export interface CaptchaVerifyOptions extends CaptchaInstanceOptions {
+  onCancel?: () => void;
+  onFail?: (error: CaptchaErrorResponse | string) => void;
+  onSuccess?: (data: CaptchaVerifySuccessData) => void;
+}
+
+export interface CaptchaRef {
+  verify: () => Promise<void>;
+}
+
+export interface CaptchaProps extends CaptchaVerifyOptions {
+  children?: ReactNode;
 }

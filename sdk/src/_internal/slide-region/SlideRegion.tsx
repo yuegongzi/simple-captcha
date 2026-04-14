@@ -4,7 +4,7 @@ import type { SlideRegionConfig, SlideRegionData, SlideRegionEvent } from './sli
 import { defaultSlideRegionConfig, defaultSlideRegionData } from './slide-region.types';
 import { CloseIcon, RefreshIcon, LoadingIcon } from '../icons';
 import { useSlideRegionHandler } from './use-slide-region-handler';
-import { useConfig } from '../../ConfigProvider';
+import { useCaptchaConfig } from '../../CaptchaProvider';
 
 export interface SlideRegionRef {
   reset: () => void;
@@ -20,7 +20,7 @@ export interface SlideRegionProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const SlideRegion = forwardRef<SlideRegionRef, SlideRegionProps>((props, ref) => {
-  const { locale } = useConfig();
+  const { locale } = useCaptchaConfig();
   const [localConfig, setLocalConfig] = useState<SlideRegionConfig>({ ...defaultSlideRegionConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<SlideRegionData>({ ...defaultSlideRegionData(), ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<SlideRegionEvent>({ ...(props.events || {}) });

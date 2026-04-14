@@ -4,7 +4,7 @@ import type { RotateConfig, RotateData, RotateEvent } from './rotate.types';
 import { defaultRotateConfig, defaultRotateData } from './rotate.types';
 import { CloseIcon, RefreshIcon, LoadingIcon, ArrowsIcon } from '../icons';
 import { useRotateHandler } from './use-rotate-handler';
-import { useConfig } from '../../ConfigProvider';
+import { useCaptchaConfig } from '../../CaptchaProvider';
 
 export interface RotateRef {
   reset: () => void;
@@ -20,7 +20,7 @@ export interface RotateProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Rotate = forwardRef<RotateRef, RotateProps>((props, ref) => {
-  const { locale } = useConfig();
+  const { locale } = useCaptchaConfig();
   const [localConfig, setLocalConfig] = useState<RotateConfig>({ ...defaultRotateConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<RotateData>({ ...defaultRotateData(), ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<RotateEvent>({ ...(props.events || {}) });

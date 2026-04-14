@@ -1,8 +1,8 @@
-import { useConfig } from './ConfigProvider';
 import { useMemo } from 'react';
+import { useCaptchaConfig } from './CaptchaProvider';
 
 export const CaptchaStyle = () => {
-  const { theme } = useConfig();
+  const { theme } = useCaptchaConfig();
 
   const css = useMemo(() => `
     .gc-wrapper {

@@ -3,7 +3,7 @@ import type { ClickConfig, ClickData, ClickDot, ClickEvent } from './click.types
 import { defaultClickConfig } from './click.types';
 import { CloseIcon, RefreshIcon, LoadingIcon } from '../icons';
 import { useClickHandler } from './use-click-handler';
-import { useConfig } from '../../ConfigProvider';
+import { useCaptchaConfig } from '../../CaptchaProvider';
 
 export interface ClickRef {
   reset: () => void;
@@ -19,7 +19,7 @@ export interface ClickProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Click = forwardRef<ClickRef, ClickProps>((props, ref) => {
-  const { locale } = useConfig();
+  const { locale } = useCaptchaConfig();
   const [localConfig, setLocalConfig] = useState<ClickConfig>({ ...defaultClickConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<ClickData>({ ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<ClickEvent>({ ...(props.events || {}) });
