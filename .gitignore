@@ -43,3 +43,4 @@ sdk/node_modules
 /docs-dist
 /lib
 .dumi
+sdk/dist
