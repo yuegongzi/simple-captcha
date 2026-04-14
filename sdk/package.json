@@ -14,6 +14,10 @@
   },
   "repository": "https://github.com/yuegongzi/simple-captcha.git",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",
