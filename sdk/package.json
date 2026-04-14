@@ -12,7 +12,7 @@
     "name": "yanganfu",
     "email": "yanganfu2012@gmail.com"
   },
-  "repository": "https://gitlab.ejiexi.com/platform-core/frontend-sdk/pc-captcha-sdk.git",
+  "repository": "https://github.com/yuegongzi/simple-captcha.git",
   "license": "MIT",
   "scripts": {
     "start": "dumi dev",
@@ -23,9 +23,6 @@
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
     "test": "umi-test",
     "test:coverage": "umi-test --coverage"
-  },
-  "publishConfig": {
-    "registry": "https://nexus.ejiexi.com/repository/npm-hosted/"
   },
   "main": "dist/index.js",
   "module": "dist/index.js",

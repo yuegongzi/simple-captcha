@@ -8,53 +8,65 @@ export interface GetCaptchaOption {
   mode?: 'light' | 'dark'
 }
 
-export interface Response {
-  data?: any
-  success?: boolean
-  errcode?: number
-  errmsg?: string
-}
-
 export interface GetCaptchaResult {
-  get: () => Promise<Response>
+  get: () => Promise<any>
   loading?: boolean
   data?: any
-  success?: boolean
-  errcode?: number
-  errmsg?: string
-  check: (rawBody: any) => Promise<Response>
+  error?: any
+  check: (rawBody: any) => Promise<any>
 }
 
 export function useCaptchaRequest(option: GetCaptchaOption): GetCaptchaResult {
   const [ loading, setLoading ] = useState<boolean>(false)
-  const [ response, setResponse ] = useState<Response>({})
+  const [ data, setData ] = useState<any>(null)
+  const [ error, setError ] = useState<any>(null)
   const { api } = useConfig();
 
-  const get = async (): Promise<Response> => {
+  const get = async (): Promise<any> => {
     setLoading(true)
-    let data;
-    if (api.getCaptcha) {
-      data = await api.getCaptcha(option.type);
-    } else {
-      const res = await request.get(`${api.basePath || ''}/cgi/captcha/${option.type}?mode=${option.mode}`);
-      data = res.data;
+    setError(null)
+    try {
+      let resData;
+      if (api.getCaptcha) {
+        resData = await api.getCaptcha(option.type);
+      } else {
+        const basePath = api.basePath || '';
+        const url = `${basePath}/api/v1/captchas/${option.type}?mode=${option.mode || ''}`;
+        const res = await request.get(url);
+        resData = res.data;
+      }
+      setData(resData);
+      return resData;
+    } catch (e: any) {
+      const errResponse = e?.response?.data || e;
+      setError(errResponse);
+      throw errResponse;
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
-    setResponse(data)
-    return data
   }
 
-  const check = async (rawBody: any): Promise<Response> => {
+  const check = async (rawBody: any): Promise<any> => {
     setLoading(true)
-    let data;
-    if (api.verifyCaptcha) {
-      data = await api.verifyCaptcha(option.type, rawBody);
-    } else {
-      const res = await request.post(`${api.basePath || ''}/cgi/captcha/${option.type}/${response.data?.key}`, rawBody);
-      data = res.data;
+    setError(null)
+    try {
+      let resData;
+      if (api.verifyCaptcha) {
+        resData = await api.verifyCaptcha(option.type, rawBody);
+      } else {
+        const basePath = api.basePath || '';
+        const url = `${basePath}/api/v1/captchas/${option.type}/${data?.key}/verify`;
+        const res = await request.post(url, rawBody);
+        resData = res.data;
+      }
+      return resData;
+    } catch (e: any) {
+      const errResponse = e?.response?.data || e;
+      setError(errResponse);
+      throw errResponse;
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
-    return data
   }
-  return { get, check, loading, ...response }
+  return { get, check, loading, data, error }
 }

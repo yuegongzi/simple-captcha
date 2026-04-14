@@ -52,8 +52,11 @@ func SetupRouter() *gin.Engine {
 	r.GET(cfg.Monitoring.MetricsPath, metricsHandler)
 	r.GET(cfg.Monitoring.StatsPath, statsHandler)
 
+	// 配置跨域中间件 (全量生效或只对api组生效)
+	r.Use(middleware.CORSMiddleware())
+
 	// 验证码API路由组（需要限流保护）
-	api := r.Group("/cgi/captcha")
+	api := r.Group("/api/v1/captchas")
 	api.Use(middleware.RateLimitMiddleware(riskControl))
 	api.Use(middleware.CacheMiddleware(5 * time.Minute)) // 缓存5分钟
 
@@ -65,20 +68,21 @@ func SetupRouter() *gin.Engine {
 
 // registerCaptchaRoutes 注册验证码相关路由
 func registerCaptchaRoutes(rg *gin.RouterGroup) {
-	// 生成验证码 - 应用验证中间件
+	// 获取验证码 - 应用验证中间件
 	rg.GET("/:type",
 		middleware.ValidateCaptchaRequest(),
 		controllers.GetCaptchaHandler)
 
-	// 验证验证码 - 应用验证中间件
-	rg.POST("/:type/:key",
+	// 一次验证（用户侧） - 应用验证中间件
+	rg.POST("/:type/:key/verify",
 		middleware.ValidateVerifyRequest(),
 		controllers.VerifyCaptchaHandler)
 
-	// 查询验证状态 - 应用验证中间件
-	rg.GET("/second/:key/state",
+	// 二次验证（业务服务端侧） - 需要 API Key 鉴权并且携带特定验证请求参数
+	rg.POST("/:key/validate",
+		middleware.APIKeyMiddleware(),
 		middleware.ValidateStateRequest(),
-		controllers.CaptchaStateHandler)
+		controllers.ValidateCaptchaHandler)
 }
 
 // healthCheckHandler 增强健康检查处理器

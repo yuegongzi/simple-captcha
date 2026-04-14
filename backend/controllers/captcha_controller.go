@@ -119,8 +119,8 @@ func (ctrl *CaptchaController) VerifyCaptchaHandler(c *gin.Context) {
 	helper.SuccessResponse(c, response)
 }
 
-// CaptchaStateHandler 验证码状态查询处理器
-func (ctrl *CaptchaController) CaptchaStateHandler(c *gin.Context) {
+// ValidateCaptchaHandler 验证码状态查询（二次验证）处理器
+func (ctrl *CaptchaController) ValidateCaptchaHandler(c *gin.Context) {
 	// 从中间件获取已验证的请求参数
 	req := middleware.GetStateRequest(c)
 	if req == nil {
@@ -138,11 +138,9 @@ func (ctrl *CaptchaController) CaptchaStateHandler(c *gin.Context) {
 
 	log.Printf("状态查询成功: key=%s, ip=%s", req.Key, helper.GetRealClientIP(c))
 
-	// 返回成功响应（保持原有格式）
+	// 返回成功响应 (纯净 RESTful)
 	c.JSON(http.StatusOK, gin.H{
-		"errcode": helper.ErrCodeSuccess,
-		"errmsg":  "已验证",
-		"success": true,
+		"valid": true,
 	})
 }
 
@@ -196,7 +194,7 @@ func VerifyCaptchaHandler(c *gin.Context) {
 	captchaController.VerifyCaptchaHandler(c)
 }
 
-// CaptchaStateHandler 全局函数（向后兼容）
-func CaptchaStateHandler(c *gin.Context) {
-	captchaController.CaptchaStateHandler(c)
+// ValidateCaptchaHandler 全局函数（向后兼容）
+func ValidateCaptchaHandler(c *gin.Context) {
+	captchaController.ValidateCaptchaHandler(c)
 }

@@ -95,6 +95,7 @@ type SecurityConfig struct {
 	GlobalRateLimit int
 	IPWhitelist     []string
 	IPBlacklist     []string
+	APIKey          string
 }
 
 var (
@@ -206,6 +207,7 @@ func loadFromEnv() *Config {
 			GlobalRateLimit: getIntEnv("RATE_LIMIT_REQUESTS", 100),
 			IPWhitelist:     getStringSliceEnv("IP_WHITELIST", []string{}),
 			IPBlacklist:     getStringSliceEnv("IP_BLACKLIST", []string{}),
+			APIKey:          getEnv("API_KEY", ""),
 		},
 	}
 }
