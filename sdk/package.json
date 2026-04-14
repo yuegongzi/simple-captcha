@@ -31,12 +31,17 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "!dist/captcha/demo",
+    "README.md"
+  ],
   "dependencies": {
-    "axios": "^1.7.9",
-    "classnames": "2.5.1",
-    "crypto-js": "4.2.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "axios": "^1.7.9"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
   "devDependencies": {
     "@types/crypto-js": "4.2.2",

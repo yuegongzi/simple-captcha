@@ -33,6 +33,12 @@ jobs:
       - name: Build SDK
         run: pnpm run build
 
+      - name: Sync version from git tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Publishing version: $VERSION"
+          npm version $VERSION --no-git-tag-version
+
       - name: Publish to NPM
         run: npm publish --access public --provenance
         env:

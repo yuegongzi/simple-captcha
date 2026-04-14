@@ -8,8 +8,11 @@
 |-----------|---------------------------------------------------------------------------------------|-----------------|------|
 | onFail    | 校验失败时的函数回调                                                                            | Function        | -    |
 | onSuccess | 校验成功时的函数回调,会将二次校验参数作为参数传递                                                             | Function        | -    |
-| type      | 显示校验模块的方式,`click-text` \| `click-shape` \| `slide-text` \| `slide-region` \| `rotate` | String          | auto |
+| onCancel  | 用户主动关闭/取消时的回调                                                             | Function        | -    |
+| type      | 显示校验模块的方式,`auto` \| `click-text` \| `click-shape` \| `slide-text` \| `slide-region` \| `rotate` | String          | auto |
 | path      | 后端路径前缀                                                                                | String          | -    |
+| locale    | 多语言文案配置覆盖                                                                                | `LocaleTexts`          | -    |
+| theme     | 主题色及样式变量覆盖                                                                                | `ThemeTokens`          | -    |
 | config    | 验证码配置                                                                                 | `CaptchaConfig` | -    |
 
 ### CaptchaConfig
@@ -28,5 +31,26 @@
 | scope             | 作用域 滑动和旋转方式生效   | number  | -   |
 | buttonText        | 按钮文字            | String  | -   |
 | dotSize           | 点击区域的大小 点选方式的生效 | number  | -   |
+
+### LocaleTexts
+
+| 属性 | 说明 |
+|---|---|
+| clickTitle | 点选模式标题 (默认: 请在下图依次点击) |
+| slideTitle | 滑块/旋转模式标题 (默认: 请拖动滑块完成拼图) |
+| confirmButton | 点选确认按钮 (默认: 确认) |
+| buttonText | 触发验证按钮文案 (默认: 点击按键进行验证) |
+| userCancel | 用户取消提示 (默认: 用户取消) |
+| loading | 加载中文案 (默认: 加载中...) |
+
+### ThemeTokens
+
+| 属性 | 说明 | 默认值 |
+|---|---|---|
+| primaryColor | 主题色 | `#347eff` |
+| backgroundColor | 弹窗背景色 | `#ffffff` |
+| textColor | 文本颜色 | `#333333` |
+| borderColor | 边框颜色 | `#e2e2e2` |
+| borderRadius | 圆角大小 | `4` |
 
 <code src='./demo/index.jsx'></code>
