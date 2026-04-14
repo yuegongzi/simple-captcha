@@ -15,7 +15,6 @@ export const defaultSlideRegionConfig = (): SlideRegionConfig => ({
   verticalPadding: 16,
   horizontalPadding: 12,
   showTheme: true,
-  title: '请拖动滑块完成拼图',
   iconSize: 22,
   scope: true,
 });

@@ -42,16 +42,16 @@ const CaptchaInternal = forwardRef<any, Omit<CaptchaProps, 'locale' | 'theme' | 
   };
   const _close = () => {
     setVisible(false);
-    onFail(locale.userCancel || '用户取消');
+    onFail(locale.userCancel!);
     onCancel();
   };
 
   const _confirm = async (rawBody: any) => {
-    const { success, data } = await check(rawBody);
-    if (success) {
+    try {
+      const result = await check(rawBody);
       setVisible(false);
-      onSuccess(data);
-    } else {
+      onSuccess(result);
+    } catch {
       await start();
     }
   };

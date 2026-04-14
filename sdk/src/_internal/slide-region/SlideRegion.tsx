@@ -4,6 +4,7 @@ import type { SlideRegionConfig, SlideRegionData, SlideRegionEvent } from './sli
 import { defaultSlideRegionConfig, defaultSlideRegionData } from './slide-region.types';
 import { CloseIcon, RefreshIcon, LoadingIcon } from '../icons';
 import { useSlideRegionHandler } from './use-slide-region-handler';
+import { useConfig } from '../../ConfigProvider';
 
 export interface SlideRegionRef {
   reset: () => void;
@@ -19,6 +20,7 @@ export interface SlideRegionProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const SlideRegion = forwardRef<SlideRegionRef, SlideRegionProps>((props, ref) => {
+  const { locale } = useConfig();
   const [localConfig, setLocalConfig] = useState<SlideRegionConfig>({ ...defaultSlideRegionConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<SlideRegionData>({ ...defaultSlideRegionData(), ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<SlideRegionEvent>({ ...(props.events || {}) });
@@ -73,7 +75,7 @@ const SlideRegion = forwardRef<SlideRegionRef, SlideRegionProps>((props, ref) =>
       ref={rootRef}
     >
       <div className="gc-header gc-header-center">
-        <span>{localConfig.title}</span>
+        <span>{localConfig.title || locale.slideTitle}</span>
       </div>
       <div className="gc-body" ref={containerRef}
         style={{ width: localConfig.width + 'px', height: localConfig.height + 'px' }}>

@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react';
 import type { ButtonConfig, ButtonType } from './button.types';
 import { defaultButtonConfig } from './button.types';
 import { BtnDefaultIcon, BtnErrorIcon, BtnWarnIcon, BtnSuccessIcon } from '../icons';
+import { useConfig } from '../../ConfigProvider';
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
   config?: ButtonConfig;
@@ -12,6 +13,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Button = (props: ButtonProps) => {
+  const { locale } = useConfig();
   const [localConfig, setLocalConfig] = useState<ButtonConfig>({ ...defaultButtonConfig(), ...(props.config || {}) });
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const Button = (props: ButtonProps) => {
       onClick={props.clickEvent}
     >
       {type === 'default' ? <div className="gc-btn-ripple">{btnIcon}</div> : btnIcon}
-      <span>{props.title || '点击按键进行验证'}</span>
+      <span>{props.title || locale.buttonText}</span>
     </div>
   );
 };

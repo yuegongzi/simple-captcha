@@ -4,6 +4,7 @@ import type { SlideConfig, SlideData, SlideEvent } from './slide.types';
 import { defaultSlideConfig, defaultSlideData } from './slide.types';
 import { CloseIcon, RefreshIcon, LoadingIcon, ArrowsIcon } from '../icons';
 import { useSlideHandler } from './use-slide-handler';
+import { useConfig } from '../../ConfigProvider';
 
 export interface SlideRef {
   reset: () => void;
@@ -19,6 +20,7 @@ export interface SlideProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Slide = forwardRef<SlideRef, SlideProps>((props, ref) => {
+  const { locale } = useConfig();
   const [localConfig, setLocalConfig] = useState<SlideConfig>({ ...defaultSlideConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<SlideData>({ ...defaultSlideData(), ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<SlideEvent>({ ...(props.events || {}) });
@@ -75,7 +77,7 @@ const Slide = forwardRef<SlideRef, SlideProps>((props, ref) => {
       ref={rootRef}
     >
       <div className="gc-header">
-        <span>{localConfig.title}</span>
+        <span>{localConfig.title || locale.slideTitle}</span>
         <div className="gc-icon-block">
           <CloseIcon width={localConfig.iconSize} height={localConfig.iconSize} onClick={handler.closeEvent} />
           <RefreshIcon width={localConfig.iconSize} height={localConfig.iconSize} onClick={handler.refreshEvent} />

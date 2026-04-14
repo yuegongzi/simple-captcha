@@ -4,6 +4,7 @@ import type { RotateConfig, RotateData, RotateEvent } from './rotate.types';
 import { defaultRotateConfig, defaultRotateData } from './rotate.types';
 import { CloseIcon, RefreshIcon, LoadingIcon, ArrowsIcon } from '../icons';
 import { useRotateHandler } from './use-rotate-handler';
+import { useConfig } from '../../ConfigProvider';
 
 export interface RotateRef {
   reset: () => void;
@@ -19,6 +20,7 @@ export interface RotateProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Rotate = forwardRef<RotateRef, RotateProps>((props, ref) => {
+  const { locale } = useConfig();
   const [localConfig, setLocalConfig] = useState<RotateConfig>({ ...defaultRotateConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<RotateData>({ ...defaultRotateData(), ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<RotateEvent>({ ...(props.events || {}) });
@@ -74,7 +76,7 @@ const Rotate = forwardRef<RotateRef, RotateProps>((props, ref) => {
       ref={rootRef}
     >
       <div className="gc-header">
-        <span>{localConfig.title}</span>
+        <span>{localConfig.title || locale.slideTitle}</span>
         <div className="gc-icon-block">
           <CloseIcon width={localConfig.iconSize} height={localConfig.iconSize} onClick={handler.closeEvent} />
           <RefreshIcon width={localConfig.iconSize} height={localConfig.iconSize} onClick={handler.refreshEvent} />

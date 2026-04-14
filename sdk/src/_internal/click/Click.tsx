@@ -3,6 +3,7 @@ import type { ClickConfig, ClickData, ClickDot, ClickEvent } from './click.types
 import { defaultClickConfig } from './click.types';
 import { CloseIcon, RefreshIcon, LoadingIcon } from '../icons';
 import { useClickHandler } from './use-click-handler';
+import { useConfig } from '../../ConfigProvider';
 
 export interface ClickRef {
   reset: () => void;
@@ -18,6 +19,7 @@ export interface ClickProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const Click = forwardRef<ClickRef, ClickProps>((props, ref) => {
+  const { locale } = useConfig();
   const [localConfig, setLocalConfig] = useState<ClickConfig>({ ...defaultClickConfig(), ...(props.config || {}) });
   const [localData, setLocalData] = useState<ClickData>({ ...(props.data || {}) });
   const [localEvents, setLocalEvents] = useState<ClickEvent>({ ...(props.events || {}) });
@@ -64,7 +66,7 @@ const Click = forwardRef<ClickRef, ClickProps>((props, ref) => {
       }}
     >
       <div className="gc-header">
-        <span>{localConfig.title}</span>
+        <span>{localConfig.title || locale.clickTitle}</span>
         <img
           className={localData.thumb === '' ? 'gc-hide' : ''}
           style={{
@@ -133,7 +135,7 @@ const Click = forwardRef<ClickRef, ClickProps>((props, ref) => {
             className={!hasDisplayImageState ? 'gc-disabled' : ''}
             onClick={handler.confirmEvent}
           >
-            {localConfig.buttonText}
+            {localConfig.buttonText || locale.confirmButton}
           </button>
         </div>
       </div>

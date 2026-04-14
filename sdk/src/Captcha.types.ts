@@ -6,6 +6,10 @@ export type CaptchaType = 'auto' | 'click-text' | 'click-shape' | 'slide-text' |
 export interface LocaleTexts {
   userCancel?: string;
   loading?: string;
+  clickTitle?: string;
+  slideTitle?: string;
+  confirmButton?: string;
+  buttonText?: string;
 }
 
 export interface ThemeTokens {
@@ -52,9 +56,9 @@ export interface CaptchaProps extends BaseTypeProps {
   theme?: ThemeTokens;
 
   /**
-   * 多语言包或预设语言标记 ('zh-CN' | 'en-US')
+   * 文案配置，覆盖默认中文文案
    */
-  locale?: 'zh-CN' | 'en-US' | LocaleTexts;
+  locale?: LocaleTexts;
 
   /**
    * 验证码类型

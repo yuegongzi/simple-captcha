@@ -10,6 +10,10 @@ export interface InternalConfig {
 const defaultLocale: LocaleTexts = {
   userCancel: '用户取消',
   loading: '加载中...',
+  clickTitle: '请在下图依次点击',
+  slideTitle: '请拖动滑块完成拼图',
+  confirmButton: '确认',
+  buttonText: '点击按键进行验证',
 };
 
 const defaultTheme: ThemeTokens = {
@@ -29,7 +33,7 @@ const ConfigContext = createContext<InternalConfig>({
 export const useConfig = () => useContext(ConfigContext);
 
 export interface ConfigProviderProps {
-  locale?: 'zh-CN' | 'en-US' | LocaleTexts;
+  locale?: LocaleTexts;
   theme?: ThemeTokens;
   api?: ApiConfig;
   path?: string;
@@ -38,12 +42,6 @@ export interface ConfigProviderProps {
 
 export const ConfigProvider = ({ locale, theme, api, path, children }: ConfigProviderProps) => {
   const mergedLocale = useMemo(() => {
-    if (typeof locale === 'string') {
-      if (locale === 'en-US') {
-        return { userCancel: 'User Cancelled', loading: 'Loading...' };
-      }
-      return defaultLocale;
-    }
     return { ...defaultLocale, ...locale };
   }, [locale]);
 
