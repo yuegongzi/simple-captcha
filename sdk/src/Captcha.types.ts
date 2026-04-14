@@ -18,8 +18,6 @@ export interface ThemeTokens {
 
 export interface ApiConfig {
   basePath?: string;
-  getCaptcha?: (type: string) => Promise<any>;
-  verifyCaptcha?: (type: string, data: any) => Promise<any>;
 }
 
 export interface CaptchaConfig {
@@ -39,13 +37,12 @@ export interface CaptchaConfig {
 
 export interface CaptchaProps extends BaseTypeProps {
   /**
-   * 后台路径前缀 (已弃用，请使用 api.basePath)
-   * @deprecated
+   * 后端服务根路径，例如 'http://127.0.0.1:3321'
    */
   path?: string;
 
   /**
-   * API 请求拦截配置
+   * API 配置，仅包含 basePath
    */
   api?: ApiConfig;
 

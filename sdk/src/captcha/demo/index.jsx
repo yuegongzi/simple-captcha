@@ -3,7 +3,7 @@ import { Captcha, useCaptcha } from 'g-captcha';
 
 export default () => {
   const ref = useRef();
-  const [run] = useCaptcha({ path: 'https://api.ejiexi.com/g', type: 'auto' });
+  const [run] = useCaptcha({ path: 'http://127.0.0.1:3321', type: 'auto' });
   const click = () => {
     ref.current?.verify();
   };
@@ -11,7 +11,7 @@ export default () => {
   return (
     <Captcha
       onSuccess={(data) => console.log(data)}
-      path="https://api.ejiexi.com/g"
+      path="http://127.0.0.1:3321"
       type="auto"
       ref={ref}
     >

@@ -68,18 +68,18 @@ func SetupRouter() *gin.Engine {
 
 // registerCaptchaRoutes 注册验证码相关路由
 func registerCaptchaRoutes(rg *gin.RouterGroup) {
-	// 获取验证码 - 应用验证中间件
+	// 获取验证码资源
 	rg.GET("/:type",
 		middleware.ValidateCaptchaRequest(),
 		controllers.GetCaptchaHandler)
 
-	// 一次验证（用户侧） - 应用验证中间件
-	rg.POST("/:type/:key/verify",
+	// 提交一次验证答案（用户侧）
+	rg.POST("/:type/:key/attempts",
 		middleware.ValidateVerifyRequest(),
 		controllers.VerifyCaptchaHandler)
 
-	// 二次验证（业务服务端侧） - 需要 API Key 鉴权并且携带特定验证请求参数
-	rg.POST("/validate/:key",
+	// 查询验证会话状态（S2S，需携带 Bearer Token）
+	rg.GET("/states/:key",
 		middleware.APIKeyMiddleware(),
 		middleware.ValidateStateRequest(),
 		controllers.ValidateCaptchaHandler)

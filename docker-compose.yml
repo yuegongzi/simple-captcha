@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -23,7 +21,7 @@ services:
       - GIN_MODE=release
       - HOST=0.0.0.0
       - API_KEY=your_secure_api_key_here
-      
+
       # ===== 业务验证频率以及高可用度配置 =====
       - CAPTCHA_EXPIRE_TIME=5m
       - CAPTCHA_MAX_ATTEMPTS=5
@@ -31,25 +29,14 @@ services:
       - ENABLE_RATE_LIMIT=true
       - RATE_LIMIT_REQUESTS=100
       - ENABLE_METRICS=true
-      
+
     volumes:
       - ./backend/logs:/app/logs
       - ./backend/images:/app/images:ro
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3321/health"]
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3321/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  frontend-dev:
-    image: node:20-alpine
-    container_name: simple-captcha-frontend
-    working_dir: /app
-    volumes:
-      - ./sdk:/app
-    # 此容器专门用于开发期间文档和组件库的热重载挂载运行，业务部署无须使用
-    command: sh -c "npm config set maxsockets 3 && npm install -g pnpm && pnpm install && pnpm start"
-    ports:
-      - "8000:8000"

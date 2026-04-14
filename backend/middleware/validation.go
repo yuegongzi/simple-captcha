@@ -90,12 +90,12 @@ func ValidateVerifyRequest() gin.HandlerFunc {
 	}
 }
 
-// ValidateStateRequest 验证状态查询请求中间件
+// ValidateStateRequest 验证状态查询请求中间件（GET，参数来自 URI）
 func ValidateStateRequest() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req models.StateRequest
 
-		// 绑定URI参数
+		// 绑定URI参数（GET 请求无 body）
 		if err := c.ShouldBindUri(&req); err != nil {
 			log.Printf("URI参数绑定失败: error=%v, ip=%s", err, c.ClientIP())
 			helper.SimpleErrorResponse(c, helper.ErrCodeInvalidParam, "路径参数错误")

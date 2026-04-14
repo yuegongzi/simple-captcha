@@ -11,4 +11,3 @@ $ yarn add g-captcha
 ```
 
 
-<code src='./demo/index.jsx'></code>

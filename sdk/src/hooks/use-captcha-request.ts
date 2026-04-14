@@ -17,26 +17,20 @@ export interface GetCaptchaResult {
 }
 
 export function useCaptchaRequest(option: GetCaptchaOption): GetCaptchaResult {
-  const [ loading, setLoading ] = useState<boolean>(false)
-  const [ data, setData ] = useState<any>(null)
-  const [ error, setError ] = useState<any>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [data, setData] = useState<any>(null)
+  const [error, setError] = useState<any>(null)
   const { api } = useConfig();
+  const basePath = api.basePath || '';
 
   const get = async (): Promise<any> => {
     setLoading(true)
     setError(null)
     try {
-      let resData;
-      if (api.getCaptcha) {
-        resData = await api.getCaptcha(option.type);
-      } else {
-        const basePath = api.basePath || '';
-        const url = `${basePath}/api/v1/captchas/${option.type}?mode=${option.mode || ''}`;
-        const res = await request.get(url);
-        resData = res.data;
-      }
-      setData(resData);
-      return resData;
+      const url = `${basePath}/api/v1/captchas/${option.type}?mode=${option.mode || ''}`;
+      const res = await request.get(url);
+      setData(res.data);
+      return res.data;
     } catch (e: any) {
       const errResponse = e?.response?.data || e;
       setError(errResponse);
@@ -50,16 +44,9 @@ export function useCaptchaRequest(option: GetCaptchaOption): GetCaptchaResult {
     setLoading(true)
     setError(null)
     try {
-      let resData;
-      if (api.verifyCaptcha) {
-        resData = await api.verifyCaptcha(option.type, rawBody);
-      } else {
-        const basePath = api.basePath || '';
-        const url = `${basePath}/api/v1/captchas/${option.type}/${data?.key}/verify`;
-        const res = await request.post(url, rawBody);
-        resData = res.data;
-      }
-      return resData;
+      const url = `${basePath}/api/v1/captchas/${option.type}/${data?.key}/attempts`;
+      const res = await request.post(url, rawBody);
+      return res.data;
     } catch (e: any) {
       const errResponse = e?.response?.data || e;
       setError(errResponse);
@@ -68,5 +55,6 @@ export function useCaptchaRequest(option: GetCaptchaOption): GetCaptchaResult {
       setLoading(false);
     }
   }
+
   return { get, check, loading, data, error }
 }
